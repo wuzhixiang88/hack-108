@@ -1,0 +1,22 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-15.3-alpine}
+    container_name: ${PROJECT_NAME:-medusa-mysf-db}-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-medusa-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-12345}
+      PGDATA: "/var/lib/postgresql/data"
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+    ports:
+      - 5432:5432
+    volumes:
+      - ${POSTGRES_VOLUME_DATA:-/medusa-mysf-db}:/var/lib/postgresql/data
+    networks:
+      internal:
+        aliases:
+          - ${POSTGRES_HOST:-postgres}
+networks:
+  internal:
+    name: ${PROJECT_NAME:-medusa-mysf}
