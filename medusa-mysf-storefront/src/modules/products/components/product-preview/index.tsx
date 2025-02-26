@@ -6,6 +6,9 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
 
+import { InformationCircleSolid } from "@medusajs/icons"
+import { Tooltip, TooltipProvider } from "@medusajs/ui"
+
 interface ExtendedStoreProduct extends HttpTypes.StoreProduct {
   mockSFC?: number
 }
@@ -44,22 +47,39 @@ export default async function ProductPreview({
           size="square"
           isFeatured={isFeatured}
         />
-        <div className="flex flex-col txt-compact-medium mt-4 justify-between">
-          <Text className="text-ui-fg-subtle mb-6" data-testid="product-title">
-            {product.title}
-          </Text>
+        <div className="flex flex-col txt-compact-medium justify-between">
+          <div className="h-16">
+            <Text
+              className="text-ui-fg-subtle mb-6"
+              data-testid="product-title"
+            >
+              {product.title}
+            </Text>
+          </div>
           <div className="flex items-center gap-x-2 mb-2 line-through">
             {`Full Course Fee: $${cheapestPrice?.calculated_price_number}`}
           </div>
           <div className="flex items-center gap-x-2 mb-2">
             {`SFC Balance: ($${product.mockSFC})`}
           </div>
-          <div className="flex items-center gap-x-2 text-red-500">{`Course Fee (with SFC Offset): $${
-            cheapestPrice?.calculated_price_number &&
-            cheapestPrice?.calculated_price_number - product.mockSFC > 0
-              ? cheapestPrice?.calculated_price_number - product.mockSFC
-              : 0
-          }`}</div>
+          <TooltipProvider>
+            <div className="flex flex-row">
+              <div className="flex items-center gap-x-2 text-red-500">
+                {"Course Fee (with SFC Offset):"}
+                <Tooltip content="Note: The final course fees shown here represents the indicative course fee payable after offsets from your SkillsFuture Credits. Please check with the training provider on your eligibility for other grants and applicable GST on the payable course fees.">
+                  <InformationCircleSolid />
+                </Tooltip>
+              </div>
+            </div>
+          </TooltipProvider>
+          <div className="text-red-500">
+            {`$${
+              cheapestPrice?.calculated_price_number &&
+              cheapestPrice?.calculated_price_number - product.mockSFC > 0
+                ? cheapestPrice?.calculated_price_number - product.mockSFC
+                : 0
+            }`}
+          </div>
         </div>
       </div>
     </LocalizedClientLink>
